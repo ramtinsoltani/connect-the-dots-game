@@ -1,0 +1,13 @@
+fly.toml
+Dockerfile
+.dockerignore
+node_modules
+.git
+src
+.vscode
+.angular
+angular.json
+.gitignore
+README.md
+tsconfig.json
+tsconfig.app.json
