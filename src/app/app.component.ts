@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Peer, DataConnection } from 'peerjs';
 import { v4 as uuidv4 } from 'uuid';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -10,9 +11,9 @@ import { v4 as uuidv4 } from 'uuid';
 export class AppComponent implements OnInit {
   
   private peer = new Peer(uuidv4(), {
-    host: 'localhost',
-    port: 4000,
-    path: '/peerjs/broker'
+    host: environment.brokerHost,
+    port: environment.brokerPort,
+    path: environment.brokerPath
   });
   private conn?: DataConnection;
   private connectionOpened = false;
@@ -20,7 +21,9 @@ export class AppComponent implements OnInit {
   public userPeerId = this.peer.id;
 
   public ngOnInit(): void {
-    
+
+    console.log('Initializing app on', environment.production ? 'production' : 'development');
+
     this.peer.on('connection', conn => {
 
       conn.on('data', data => console.log(data));

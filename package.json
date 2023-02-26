@@ -4,8 +4,9 @@
   "version": "0.0.0",
   "scripts": {
     "start": "node server.js",
-    "build": "npx ng build --aot",
-    "deploy": "npm run build && flyctl deploy"
+    "build:dev": "npx ng build --aot --configuration=development",
+    "build:prod": "npx ng build --aot --configuration=production",
+    "deploy": "npm run build:prod && flyctl deploy"
   },
   "main": "server.js",
   "private": true,
