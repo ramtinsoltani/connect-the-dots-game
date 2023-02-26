@@ -3,7 +3,7 @@ const express = require('express');
 const { ExpressPeerServer } = require('peer');
 const app = express();
 const FE_ROOT_DIR = path.resolve(__dirname, 'dist', 'connect-the-dots-game');
-const PORT = process.env.port || 3000;
+const PORT = process.env.PORT || 3000;
 
 const server = app.listen(PORT, () => {
 
