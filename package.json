@@ -1,13 +1,15 @@
 {
   "name": "connect-the-dots-game",
+  "description": "Peer-to-peer connect the dots game",
   "version": "0.0.0",
   "scripts": {
-    "ng": "ng",
-    "start": "ng serve",
-    "build": "ng build",
-    "watch": "ng build --watch --configuration development"
+    "start": "npx ts-node server.ts",
+    "build": "npx ng build --aot"
   },
   "private": true,
+  "license": "MIT",
+  "author": "Ramtin Soltani <ramtinsoltani93@gmail.com>",
+  "repository": "github:ramtinsoltani/connect-the-dots-game",
   "dependencies": {
     "@angular/animations": "^15.2.0",
     "@angular/common": "^15.2.0",
@@ -17,14 +19,19 @@
     "@angular/platform-browser": "^15.2.0",
     "@angular/platform-browser-dynamic": "^15.2.0",
     "@angular/router": "^15.2.0",
+    "peerjs": "^1.4.7",
     "rxjs": "~7.8.0",
     "tslib": "^2.3.0",
+    "uuid": "^9.0.0",
     "zone.js": "~0.12.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.2.0",
     "@angular/cli": "~15.2.0",
     "@angular/compiler-cli": "^15.2.0",
+    "express": "^4.18.2",
+    "peer": "^0.6.1",
+    "ts-node": "^10.9.1",
     "typescript": "~4.9.4"
   }
 }

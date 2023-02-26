@@ -1,0 +1,3 @@
+<p>Your Peer ID is <strong>{{userPeerId}}</strong></p>
+<input #peerId type="text" placeholder="Peer ID to connect to...">
+<button [disabled]="! peerId.value.trim().length" (click)="connectToPeer(peerId.value.trim())">Connect</button>
