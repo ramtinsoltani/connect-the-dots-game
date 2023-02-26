@@ -3,9 +3,10 @@
   "description": "Peer-to-peer connect the dots game",
   "version": "0.0.0",
   "scripts": {
-    "start": "npx ts-node server.ts",
+    "start": "node server.js",
     "build": "npx ng build --aot"
   },
+  "main": "server.js",
   "private": true,
   "license": "MIT",
   "author": "Ramtin Soltani <ramtinsoltani93@gmail.com>",

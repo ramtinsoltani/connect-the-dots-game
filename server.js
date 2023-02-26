@@ -19,7 +19,7 @@ app.use(express.static(FE_ROOT_DIR));
 app.get('*', (req, res) => res.sendFile(
   'index.html',
   { root: FE_ROOT_DIR },
-  (error: Error) => {
+  error => {
     if ( error ) console.error(error);
   }
 ));
