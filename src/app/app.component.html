@@ -1,8 +1,31 @@
-<p>Your Peer ID is <strong>{{userPeerId}}</strong></p>
-<input #peerId type="text" placeholder="Peer ID to connect to...">
-<button [disabled]="! peerId.value.trim().length" (click)="connectToPeer(peerId.value.trim())">Connect</button>
-<hr>
-<input #message type="text" placeholder="Message">
-<button (click)="sendData({ message: message.value })">Send message</button>
-<hr>
-<button (click)="closeConnection()">Close connection</button>
+<main>
+  <app-dialog
+  *ngIf="gameProgress === GameProgress.NotStarted"
+  [disabled]="working"
+  title="Connect To Player"
+  submitLabel="Connect"
+  [type]="DialogType.Connect"
+  [id]="id"
+  (onSubmit)="onDialogSubmit($event)"></app-dialog>
+  <app-dialog
+  *ngIf="gameProgress === GameProgress.AwaitingPlayers && awaitingInput"
+  [title]="connectionStatus === ConnectionStatus.Joined ? 'Join Game' : 'New Game'"
+  [submitLabel]="connectionStatus === ConnectionStatus.Joined ? 'Join' : 'Create'"
+  [type]="connectionStatus === ConnectionStatus.Joined ? DialogType.JoinGame : DialogType.NewGame"
+  (onSubmit)="onDialogSubmit($event)"></app-dialog>
+  <span
+  *ngIf="gameProgress === GameProgress.AwaitingPlayers && ! awaitingInput"
+  class="text-dimmed">
+    Waiting for other player...
+  </span>
+</main>
+<span
+class="status"
+[ngClass]="{
+  dim: connectionStatus === ConnectionStatus.NotConnected,
+  yellow: connectionStatus === ConnectionStatus.Reconnecting,
+  green: [ConnectionStatus.Connected, ConnectionStatus.Joined].includes(connectionStatus),
+  red: connectionStatus === ConnectionStatus.Disconnected
+}">
+  {{ connectionStatus }}
+</span>

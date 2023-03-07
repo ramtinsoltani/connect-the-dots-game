@@ -1,1 +1,17 @@
-/* You can add global styles to this file, and also import other style files */
+@import './styles/utils';
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background-color: color(gray-darker);
+  font-family: 'Rubik', sans-serif;
+  color: color(gray-lighter);
+  min-height: 100vh;
+}
+
+.text-dimmed {
+  color: color(gray-light);
+}

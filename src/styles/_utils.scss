@@ -1,0 +1,9 @@
+@import './palette';
+
+@function rem($value) {
+  @return ($value / 16px) + rem;
+}
+
+@function color($key) {
+  @return map-get($palette, $key);
+}

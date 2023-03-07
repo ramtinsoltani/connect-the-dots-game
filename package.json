@@ -6,6 +6,7 @@
     "start": "node server.js",
     "build:dev": "npx ng build --aot --configuration=development",
     "build:prod": "npx ng build --aot --configuration=production",
+    "local": "npm run build:dev && npm start",
     "deploy": "npm run build:prod && flyctl deploy"
   },
   "main": "server.js",
@@ -23,6 +24,8 @@
     "@angular/platform-browser-dynamic": "^15.2.0",
     "@angular/router": "^15.2.0",
     "express": "^4.18.2",
+    "fast-json-patch": "^3.1.1",
+    "lodash-es": "^4.17.21",
     "peer": "^0.6.1",
     "peerjs": "^1.4.7",
     "rxjs": "~7.8.0",
@@ -33,6 +36,7 @@
     "@angular-devkit/build-angular": "^15.2.0",
     "@angular/cli": "~15.2.0",
     "@angular/compiler-cli": "^15.2.0",
+    "@types/lodash-es": "^4.17.6",
     "@types/node": "^18.14.2",
     "typescript": "~4.9.4"
   }

@@ -1,7 +1,7 @@
-import { Component, OnInit } from '@angular/core';
-import { Peer, DataConnection } from 'peerjs';
-import { environment } from '../environments/environment';
-import { UtilitiesService } from './services/utilities.service';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { GameService, GameProgress, GameSize } from './services/game.service';
+import { PeerService, ConnectionStatus } from './services/peer.service';
+import { DialogType, DialogData, ConnectDialogData, NewGameDialogData, JoinGameDialogData } from './components/dialog/dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -9,127 +9,69 @@ import { UtilitiesService } from './services/utilities.service';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit {
-  
-  private peer = new Peer(this.util.generateId(), {
-    host: environment.brokerHost,
-    port: environment.brokerPort,
-    path: environment.brokerPath,
-    secure: environment.production
-  });
-  private conn?: DataConnection;
-  private connectionOpened = false;
-  private peerConnectionId?: string;
-  private reconnectionTimer?: NodeJS.Timer;
 
-  public userPeerId = this.peer.id;
+  public DialogType = DialogType;
+  public ConnectionStatus = ConnectionStatus;
+  public GameProgress = GameProgress;
+
+  public working = false;
+  public id = this.peer.id;
+  public connectionStatus!: ConnectionStatus;
+  public gameProgress!: GameProgress;
+  public awaitingInput: boolean = true;
 
   constructor(
-    private util: UtilitiesService
+    private detector: ChangeDetectorRef,
+    private game: GameService,
+    private peer: PeerService
   ) { }
-
+  
   public ngOnInit(): void {
 
-    console.debug('Initializing app on', environment.production ? 'production' : 'development');
+    this.peer.connectionState.subscribe(state => {
 
-    this.peer.on('connection', conn => {
+      this.connectionStatus = state;
+      this.working = false;
 
-      console.debug(`Connected to peer with ID ${conn.peer}`);
-
-      if ( this.reconnectionTimer ) {
-
-        clearInterval(this.reconnectionTimer);
-        this.reconnectionTimer = undefined;
-
-      }
-
-      conn.on('data', data => console.log(data));
-
-      conn.on('close', () => {
-
-        console.warn('Connection to peer closed!');
-        this.connectionOpened = false;
-
-      });
-
-      conn.on('error', error => console.error('Peer connection error:', error));
+      this.detector.detectChanges();
 
     });
 
-    this.peer.on('disconnected', () => {
+    this.game.progress.subscribe(state => {
 
-      console.warn('Disconnected from server!');
+      this.gameProgress = state;
 
-      this.reconnectionTimer = setInterval(() => {
-
-        if ( this.peer.disconnected ) {
-          
-          console.debug('Reconnecting to server...');
-          this.peer.reconnect();
-        }
-        else if ( this.peerConnectionId ) {
-
-          console.debug('Reconnecting to peer...');
-          this.connectToPeer(this.peerConnectionId);
-
-        }
-
-      }, 3000);
+      this.detector.detectChanges();
 
     });
-
-    this.peer.on('close', () => console.warn('Connection to server closed!'));
-    this.peer.on('error', error => console.error('Server connection error:', error));
-
-  }
-
-  public connectToPeer(id: string): void {
-
-    console.debug(`Connecting to peer with ID ${id}...`);
-
-    this.conn = this.peer.connect(id);
-
-    this.conn.on('open', () => {
-
-      this.connectionOpened = true;
-      this.peerConnectionId = id;
-
-      if ( this.reconnectionTimer ) {
-
-        clearInterval(this.reconnectionTimer);
-        this.reconnectionTimer = undefined;
-
-      }
-
-      console.debug(`Connection to peer with ID ${id} established`);
-
-    });
-
-    this.conn.on('close', () => {
-
-      console.warn(`Connection to peer with ID ${id} was closed!`);
-
-      this.connectionOpened = false;
-      this.conn = undefined;
-
-    });
-
-    this.conn.on('error', error => console.error(`Connection to peer error:`, error));
-
-  }
-
-  public sendData(data: any): void {
-
-    if ( ! this.conn || ! this.connectionOpened )
-      return console.warn('No peer connection!');
     
-    this.conn.send(data);
-
   }
 
-  public closeConnection(): void {
+  public onDialogSubmit(event: DialogData) {
 
-    this.conn?.close();
+    if ( event.type === DialogType.Connect ) {
 
+      this.working = true;
+      this.peer.connect((event as ConnectDialogData).data.peerId);
+
+    }
+    else if ( event.type === DialogType.NewGame ) {
+
+      const { data } = event as NewGameDialogData;
+
+      this.game.setGameData(data.displayName, data.gameSize as GameSize);
+      this.awaitingInput = false;
+
+    }
+    else if ( event.type === DialogType.JoinGame ) {
+
+      const { data } = event as JoinGameDialogData;
+
+      this.game.setGameData(data.displayName);
+      this.awaitingInput = false;
+
+    }
+    
   }
 
 }
