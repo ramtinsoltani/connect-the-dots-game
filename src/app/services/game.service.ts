@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
-import { PeerService, ConnectionStatus, Operation } from './peer.service';
+import { Injectable, EventEmitter } from '@angular/core';
+import { PeerService, ConnectionStatus } from './peer.service';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { clone, cloneDeep } from 'lodash-es';
+import { cloneDeep } from 'lodash-es';
 import { applyPatch, observe, generate } from 'fast-json-patch';
 
 @Injectable({
@@ -30,6 +30,9 @@ export class GameService {
     return () => sub.unsubscribe();
 
   });
+
+  /** Emits immutable game state data when state is changed. */
+  public onStateChanged = new EventEmitter<GameState>();
 
   constructor(
     private peer: PeerService
@@ -62,6 +65,8 @@ export class GameService {
       applyPatch(this.state, data, true, true);
       
       this.updateGameProgress();
+
+      this.onStateChanged.emit(cloneDeep(this.state));
 
     });
 
@@ -122,6 +127,8 @@ export class GameService {
 
     this.updateGameProgress();
 
+    this.onStateChanged.emit(cloneDeep(this.state));
+
   }
 
   public startNewGame(): void {
@@ -141,6 +148,14 @@ export class GameService {
     this.peer.send(generate(observer));
 
     this.updateGameProgress();
+
+    this.onStateChanged.emit(cloneDeep(this.state));
+
+  }
+
+  public isPlayerHost(): boolean {
+
+    return this.isHost;
 
   }
 

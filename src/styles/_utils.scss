@@ -1,7 +1,7 @@
 @import './palette';
 
 @function rem($value) {
-  @return ($value / 16px) + rem;
+  @return calc($value / 16px) + rem;
 }
 
 @function color($key) {

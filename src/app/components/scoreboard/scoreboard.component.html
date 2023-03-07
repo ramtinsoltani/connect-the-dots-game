@@ -1,0 +1,15 @@
+<div class="scoreboard">
+  <div class="name-plate left-radius host" [ngClass]="{ playing: currentTurn === PlayerTurn.Host }">
+    <span>{{ hostName }}</span>
+  </div>
+  <div class="score-plate left-radius host">
+    {{ hostScore }}
+  </div>
+  <div class="score-plate right-radius joined">
+    {{ joinedScore }}
+  </div>
+  <div class="name-plate right-radius joined" [ngClass]="{ playing: currentTurn === PlayerTurn.Joined }">
+    <span>{{ joinedName }}</span>
+  </div>
+</div>
+<span class="new-game" *ngIf="displayNewGame || true">New Game</span>

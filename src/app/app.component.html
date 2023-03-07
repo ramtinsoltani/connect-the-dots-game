@@ -18,6 +18,17 @@
   class="text-dimmed">
     Waiting for other player...
   </span>
+  <ng-container *ngIf="[GameProgress.InProgress, GameProgress.Finished].includes(gameProgress) && gameState">
+    <app-scoreboard
+    [hostName]="gameState.players.host?.name"
+    [joinedName]="gameState.players.joined?.name"
+    [hostScore]="gameState.players.host?.score"
+    [joinedScore]="gameState.players.joined?.score"
+    [currentTurn]="gameState.currentTurn"
+    [displayNewGame]="gameProgress === GameProgress.Finished && isPlayerHost()"
+    (onNewGame)="onNewGameClicked()">
+    </app-scoreboard>
+  </ng-container>
 </main>
 <span
 class="status"

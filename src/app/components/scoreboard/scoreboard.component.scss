@@ -1,0 +1,90 @@
+@import '../../../styles/utils';
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: absolute;
+  top: rem(20px);
+  margin: auto;
+  z-index: 100;
+  gap: rem(20px);
+}
+
+.scoreboard {
+  display: flex;
+  align-items: center;
+}
+
+.name-plate {
+  width: rem(200px);
+  height: rem(50px);
+  display: flex;
+  color: color(gray-transparent);
+  font-weight: 500;
+  font-size: rem(24px);
+  align-items: center;
+  padding: 0 rem(20px);
+  transition: color .2s ease-in-out;
+  
+  span {
+    width: 100%;
+    text-transform: uppercase;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &.host {
+    background-image: linear-gradient(270deg, rgb(0 0 0 / 20%), transparent 5%);
+
+    span {
+      text-align: right;
+    }
+  }
+
+  &.joined {
+    background-image: linear-gradient(90deg, rgb(0 0 0 / 20%), transparent 5%);
+  }
+
+  &.playing {
+    color: color(gray-lightest);
+  }
+}
+
+.score-plate {
+  width: rem(60px);
+  height: rem(60px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: color(gray-lightest);
+  font-size: rem(40px);
+}
+
+.host {
+  background-color: color(accent-blue);
+}
+
+.joined {
+  background-color: color(accent-red);
+}
+
+.left-radius {
+  border-radius: 3px 0 0 3px;
+}
+
+.right-radius {
+  border-radius: 0 3px 3px 0;
+}
+
+.new-game {
+  font-weight: 500;
+  color: color(accent-blue);
+  cursor: pointer;
+  transition: transform .2s ease-in-out;
+
+  &:hover {
+    transform: scale(1.25);
+  }
+}

@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { GameService, GameProgress, GameSize } from './services/game.service';
+import { GameService, GameProgress, GameSize, GameState } from './services/game.service';
 import { PeerService, ConnectionStatus } from './services/peer.service';
 import { DialogType, DialogData, ConnectDialogData, NewGameDialogData, JoinGameDialogData } from './components/dialog/dialog.component';
 
@@ -19,6 +19,7 @@ export class AppComponent implements OnInit {
   public connectionStatus!: ConnectionStatus;
   public gameProgress!: GameProgress;
   public awaitingInput!: boolean;
+  public gameState?: GameState;
 
   constructor(
     private detector: ChangeDetectorRef,
@@ -43,6 +44,14 @@ export class AppComponent implements OnInit {
 
       if ( state === GameProgress.AwaitingPlayers )
         this.awaitingInput = true;
+
+      this.detector.detectChanges();
+
+    });
+
+    this.game.onStateChanged.subscribe(state => {
+
+      this.gameState = state;
 
       this.detector.detectChanges();
 
@@ -75,6 +84,18 @@ export class AppComponent implements OnInit {
 
     }
     
+  }
+
+  public isPlayerHost(): boolean {
+
+    return this.game.isPlayerHost();
+
+  }
+
+  public onNewGameClicked(): void {
+
+    this.game.startNewGame();
+
   }
 
 }
