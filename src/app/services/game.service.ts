@@ -93,8 +93,18 @@ export class GameService {
       score: 0
     };
 
+    // Set player name in local storage
+    localStorage.setItem('name', name);
+
     // Set game size if player is host
-    if ( this.isHost && size ) this.state.size = size;
+    if ( this.isHost && size ) {
+
+      this.state.size = size;
+
+      // Set game size in local storage
+      localStorage.setItem('gameSize', size);
+
+    }
 
     // Send patch for changes to other player
     this.peer.send(generate(observer));

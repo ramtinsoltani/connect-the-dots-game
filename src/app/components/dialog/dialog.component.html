@@ -24,6 +24,7 @@
     name="displayName"
     placeholder="Your display name..."
     maxlength="32"
+    [value]="defaultName"
     (keyup)="checkSubmitState(displayName.value)"
     [disabled]="disabled">
   </div>
@@ -31,10 +32,10 @@
     <div class="form-control small">
       <label for="gameSize">Game Size</label>
       <select #gameSize name="gameSize">
-        <option [value]="GameSize.Small">Small (6x6)</option>
-        <option [value]="GameSize.Medium" selected>Medium (8x8)</option>
-        <option [value]="GameSize.Large">Large (10x10)</option>
-        <option [value]="GameSize.Huge">Huge (12x12)</option>
+        <option [value]="GameSize.Small" [selected]="defaultGameSize === GameSize.Small">Small (6x6)</option>
+        <option [value]="GameSize.Medium" [selected]="defaultGameSize === GameSize.Medium">Medium (8x8)</option>
+        <option [value]="GameSize.Large" [selected]="defaultGameSize === GameSize.Large">Large (10x10)</option>
+        <option [value]="GameSize.Huge" [selected]="defaultGameSize === GameSize.Huge">Huge (12x12)</option>
       </select>
     </div>
   </ng-container>

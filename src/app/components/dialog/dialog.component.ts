@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef, AfterViewInit } from '@angular/core';
 import { GameSize } from 'src/app/services/game.service';
 
 @Component({
@@ -6,7 +6,7 @@ import { GameSize } from 'src/app/services/game.service';
   templateUrl: './dialog.component.html',
   styleUrls: ['./dialog.component.scss']
 })
-export class DialogComponent {
+export class DialogComponent implements AfterViewInit {
 
   public GameSize = GameSize;
 
@@ -35,7 +35,10 @@ export class DialogComponent {
   public disabled: boolean = false;
 
   public DialogType = DialogType;
+
   public submitDisabled = true;
+  public defaultName = localStorage.getItem('name');
+  public defaultGameSize = localStorage.getItem('gameSize');
 
   @Output()
   public onSubmit = new EventEmitter<DialogData>();
@@ -43,6 +46,16 @@ export class DialogComponent {
   constructor(
     private detector: ChangeDetectorRef,
   ) { }
+
+  public ngAfterViewInit(): void {
+    
+    if ( this.type !== DialogType.Connect ) {
+
+      this.checkSubmitState(this.displayNameElement?.nativeElement.value as string);
+
+    }
+    
+  }
 
   public checkSubmitState(value: string): void {
 

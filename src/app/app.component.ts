@@ -18,7 +18,7 @@ export class AppComponent implements OnInit {
   public id = this.peer.id;
   public connectionStatus!: ConnectionStatus;
   public gameProgress!: GameProgress;
-  public awaitingInput: boolean = true;
+  public awaitingInput!: boolean;
 
   constructor(
     private detector: ChangeDetectorRef,
@@ -40,6 +40,9 @@ export class AppComponent implements OnInit {
     this.game.progress.subscribe(state => {
 
       this.gameProgress = state;
+
+      if ( state === GameProgress.AwaitingPlayers )
+        this.awaitingInput = true;
 
       this.detector.detectChanges();
 
