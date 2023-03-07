@@ -12,4 +12,4 @@
     <span>{{ joinedName }}</span>
   </div>
 </div>
-<span class="new-game" *ngIf="displayNewGame || true">New Game</span>
+<span (click)="onNewGame.emit()" class="new-game" *ngIf="displayNewGame">New Game</span>

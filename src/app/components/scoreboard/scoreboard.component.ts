@@ -29,6 +29,6 @@ export class ScoreboardComponent {
   public displayNewGame: boolean = false;
 
   @Output()
-  public onNewGame = new EventEmitter<boolean>();
+  public onNewGame = new EventEmitter<void>();
 
 }
