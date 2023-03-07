@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { PeerService, ConnectionStatus, Operation } from './peer.service';
 import { BehaviorSubject, Observable } from 'rxjs';
-import { cloneDeep } from 'lodash-es';
+import { clone, cloneDeep } from 'lodash-es';
 import { applyPatch, observe, generate } from 'fast-json-patch';
 
 @Injectable({
@@ -61,21 +61,32 @@ export class GameService {
 
       applyPatch(this.state, data, true, true);
       
-      this.startGameIfStateIsReady();
+      this.updateGameProgress();
 
     });
 
   }
 
-  private startGameIfStateIsReady(): void {
+  private updateGameProgress(): void {
 
-    if ( ! [GameProgress.AwaitingPlayers, GameProgress.Finished].includes(this.progress$.value) ) return;
+    let newState: GameProgress | null = null;
 
-    if ( this.state.players.host?.ready && this.state.players.joined?.ready ) {
-      
-      this.progress$.next(GameProgress.InProgress);
+    // If currently awaiting players and both players are ready
+    if ( GameProgress.AwaitingPlayers && this.state.players.host?.ready && this.state.players.joined?.ready ) {
+
+      newState = GameProgress.InProgress;
+
+      // Set current turn to host (default starting player)
+      this.state.currentTurn = PlayerTurn.Host;
 
     }
+    
+    // If game is finished but state is clean (new game)
+    if ( GameProgress.Finished && this.state.size === undefined )
+      newState = GameProgress.AwaitingPlayers;
+
+    if ( newState !== null && this.progress$.value !== newState )
+      this.progress$.next(newState);
 
   }
 
@@ -109,7 +120,27 @@ export class GameService {
     // Send patch for changes to other player
     this.peer.send(generate(observer));
 
-    this.startGameIfStateIsReady();
+    this.updateGameProgress();
+
+  }
+
+  public startNewGame(): void {
+
+    if ( this.progress$.value !== GameProgress.Finished || ! this.isHost ) return;
+
+    // Get changes observer for game state object
+    const observer = observe<GameState>(this.state);
+
+    // Reset state
+    delete this.state.size;
+    delete this.state.currentTurn;
+    this.state.players = this.DEFAULT_STATE.players;
+    this.state.board = this.DEFAULT_STATE.board;
+
+    // Send patch for changes to other player
+    this.peer.send(generate(observer));
+
+    this.updateGameProgress();
 
   }
 
