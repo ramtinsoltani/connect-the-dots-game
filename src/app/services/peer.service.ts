@@ -44,6 +44,11 @@ export class PeerService {
     return this.peerConnectionId;
 
   }
+  public get lastConnectionState() {
+
+    return this.connectionState$.value;
+
+  }
 
   constructor(
     private util: UtilitiesService

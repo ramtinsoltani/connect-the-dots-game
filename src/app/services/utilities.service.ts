@@ -19,4 +19,10 @@ export class UtilitiesService {
 
   }
 
+  public randomInRange(min: number, max: number) {
+
+    return Math.random() * (max - min) + min;
+
+  }
+
 }

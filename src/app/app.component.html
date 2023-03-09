@@ -26,8 +26,18 @@
     [joinedScore]="gameState.players.joined?.score"
     [currentTurn]="gameState.currentTurn"
     [displayNewGame]="gameProgress === GameProgress.Finished && isPlayerHost()"
+    [winner]="gameProgress === GameProgress.Finished ? getWinner() : undefined"
     (onNewGame)="onNewGameClicked()">
     </app-scoreboard>
+    <app-board
+    [cells]="gameState.board.cells"
+    [vLines]="gameState.board.vLines"
+    [hLines]="gameState.board.hLines"
+    [hostName]="gameState.players.host?.name"
+    [joinedName]="gameState.players.joined?.name"
+    [canPlay]="(isPlayerHost() && gameState.currentTurn === PlayerTurn.Host) || (! isPlayerHost() && gameState.currentTurn === PlayerTurn.Joined)"
+    (onLineClicked)="drawLine($event)">
+    </app-board>
   </ng-container>
 </main>
 <span

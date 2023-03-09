@@ -1,0 +1,38 @@
+<div class="layer cells">
+  <div class="row" *ngFor="let row of cells; index as i">
+    <div
+    *ngFor="let cell of row; index as j"
+    class="cell"
+    [ngClass]="{
+      host: cell.state === CellState.HostPlayer,
+      joined: cell.state === CellState.JoinedPlayer
+    }">
+      <span *ngIf="cell.state !== CellState.Free">{{ getPlayerInitial(cell.state) }}</span>
+    </div>
+  </div>
+</div>
+<div class="layer vlines">
+  <div class="row" *ngFor="let row of vLines; index as i">
+    <div
+    *ngFor="let line of row; index as j"
+    class="vline"
+    [ngClass]="{ drawn: line.state }"
+    (click)="onLineClick('v', [i, j])">
+    </div>
+  </div>
+</div>
+<div class="layer hlines">
+  <div class="row" *ngFor="let row of hLines; index as i">
+    <div
+    *ngFor="let line of row; index as j"
+    class="hline"
+    [ngClass]="{ drawn: line.state }"
+    (click)="onLineClick('h', [i, j])">
+    </div>
+  </div>
+</div>
+<div class="layer dots">
+  <div class="row" *ngFor="let row of dots">
+    <div class="dot" *ngFor="let dot of row" [ngClass]="{ drawn: dot }"></div>
+  </div>
+</div>

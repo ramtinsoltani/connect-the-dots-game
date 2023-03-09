@@ -32,6 +32,7 @@
     <div class="form-control small">
       <label for="gameSize">Game Size</label>
       <select #gameSize name="gameSize">
+        <option [value]="GameSize.Test" [selected]="defaultGameSize === GameSize.Test">Test (2x2)</option>
         <option [value]="GameSize.Small" [selected]="defaultGameSize === GameSize.Small">Small (6x6)</option>
         <option [value]="GameSize.Medium" [selected]="defaultGameSize === GameSize.Medium">Medium (8x8)</option>
         <option [value]="GameSize.Large" [selected]="defaultGameSize === GameSize.Large">Large (10x10)</option>

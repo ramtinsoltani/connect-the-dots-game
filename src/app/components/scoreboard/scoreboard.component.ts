@@ -28,6 +28,9 @@ export class ScoreboardComponent {
   @Input()
   public displayNewGame: boolean = false;
 
+  @Input()
+  public winner?: PlayerTurn;
+
   @Output()
   public onNewGame = new EventEmitter<void>();
 

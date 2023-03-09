@@ -1,15 +1,24 @@
-<div class="scoreboard">
+<div
+class="scoreboard"
+[ngClass]="{
+  'winner-host': winner !== undefined && winner === PlayerTurn.Host,
+  'winner-joined': winner !== undefined && winner === PlayerTurn.Joined
+}">
   <div class="name-plate left-radius host" [ngClass]="{ playing: currentTurn === PlayerTurn.Host }">
     <span>{{ hostName }}</span>
+    <div class="shine" *ngIf="winner === PlayerTurn.Host"></div>
   </div>
   <div class="score-plate left-radius host">
     {{ hostScore }}
+    <div class="shine" *ngIf="winner === PlayerTurn.Host"></div>
   </div>
   <div class="score-plate right-radius joined">
     {{ joinedScore }}
+    <div class="shine" *ngIf="winner === PlayerTurn.Joined"></div>
   </div>
   <div class="name-plate right-radius joined" [ngClass]="{ playing: currentTurn === PlayerTurn.Joined }">
     <span>{{ joinedName }}</span>
+    <div class="shine" *ngIf="winner === PlayerTurn.Joined"></div>
   </div>
 </div>
 <span (click)="onNewGame.emit()" class="new-game" *ngIf="displayNewGame">New Game</span>

@@ -1,0 +1,133 @@
+@import '../../../styles/utils';
+
+:host {
+  position: relative;
+  margin-top: rem(60px);
+  user-select: none;
+}
+
+.layer {
+  display: flex;
+  flex-direction: column;
+  pointer-events: none;
+
+  .row {
+    display: flex;
+
+    .cell {
+      pointer-events: all;
+      width: rem(50px);
+      height: rem(50px);
+      background-color: transparent;
+      transition: background-color .1s ease-in-out;
+      color: rgba(0 0 0 / 35%);
+      font-size: rem(24px);
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &.host {
+        background-color: color(accent-blue);
+      }
+
+      &.joined {
+        background-color: color(accent-red);
+      }
+
+      &:not(.host):not(.joined):hover {
+        background-color: color(gray-dark);
+      }
+    }
+
+    .vline {
+      pointer-events: all;
+      height: rem(50px);
+      width: rem(14px);
+      display: flex;
+      justify-content: center;
+      
+      &::after {
+        content: '';
+        display: block;
+        height: 100%;
+        width: rem(4px);
+        background-color: transparent;
+        transition: background-color .1s ease-in-out;
+      }
+
+      &:not(.drawn):hover::after {
+        background-color: color(gray-medium);
+      }
+
+      &.drawn::after {
+        background-color: color(gray-lightest);
+      }
+    }
+
+    .hline {
+      pointer-events: all;
+      height: rem(14px);
+      width: rem(50px);
+      display: flex;
+      align-items: center;
+      
+      &::after {
+        content: '';
+        display: block;
+        width: 100%;
+        height: rem(4px);
+        background-color: transparent;
+        transition: background-color .1s ease-in-out;
+      }
+
+      &:not(.drawn):hover::after {
+        background-color: color(gray-medium);
+      }
+
+      &.drawn::after {
+        background-color: color(gray-lightest);
+      }
+    }
+
+    .dot {
+      width: rem(14px);
+      height: rem(14px);
+      border-radius: 50%;
+      background-color: color(gray-medium);
+      transition: background-color .1s ease-in-out;
+
+      &.drawn {
+        background-color: color(gray-lightest);
+      }
+    }
+  }
+
+  &.vlines {
+    position: absolute;
+    left: rem(-7px);
+    top: 0;
+
+    .row {
+      gap: rem(36px);
+    }
+  }
+
+  &.hlines {
+    position: absolute;
+    top: rem(-7px);
+    left: 0;
+    gap: rem(36px);
+  }
+
+  &.dots {
+    gap: rem(36px);
+    position: absolute;
+    top: rem(-7px);
+    left: rem(-7px);
+
+    .row {
+      gap: rem(36px);
+    }
+  }
+}

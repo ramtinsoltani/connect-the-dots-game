@@ -1,7 +1,10 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { GameService, GameProgress, GameSize, GameState } from './services/game.service';
+import { GameService, GameProgress, GameSize, GameState, PlayerTurn } from './services/game.service';
 import { PeerService, ConnectionStatus } from './services/peer.service';
 import { DialogType, DialogData, ConnectDialogData, NewGameDialogData, JoinGameDialogData } from './components/dialog/dialog.component';
+import { BoardLineEvent } from './components/board/board.component';
+import confetti from 'canvas-confetti';
+import { UtilitiesService } from './services/utilities.service';
 
 @Component({
   selector: 'app-root',
@@ -10,9 +13,12 @@ import { DialogType, DialogData, ConnectDialogData, NewGameDialogData, JoinGameD
 })
 export class AppComponent implements OnInit {
 
+  private confettiTimer?: NodeJS.Timer;
+
   public DialogType = DialogType;
   public ConnectionStatus = ConnectionStatus;
   public GameProgress = GameProgress;
+  public PlayerTurn = PlayerTurn;
 
   public working = false;
   public id = this.peer.id;
@@ -24,7 +30,8 @@ export class AppComponent implements OnInit {
   constructor(
     private detector: ChangeDetectorRef,
     private game: GameService,
-    private peer: PeerService
+    private peer: PeerService,
+    private utilities: UtilitiesService
   ) { }
   
   public ngOnInit(): void {
@@ -44,6 +51,16 @@ export class AppComponent implements OnInit {
 
       if ( state === GameProgress.AwaitingPlayers )
         this.awaitingInput = true;
+
+      // Play confetti animation if player won
+      if ( state === GameProgress.Finished ) {
+
+        const winner = this.getWinner();
+
+        if ( (this.isPlayerHost() && winner === PlayerTurn.Host) || (! this.isPlayerHost() && winner === PlayerTurn.Joined) )
+          this.playConfetti();
+
+      }
 
       this.detector.detectChanges();
 
@@ -94,7 +111,47 @@ export class AppComponent implements OnInit {
 
   public onNewGameClicked(): void {
 
+    if ( this.confettiTimer )
+      clearInterval(this.confettiTimer);
+
     this.game.startNewGame();
+
+  }
+
+  public drawLine(event: BoardLineEvent): void {
+
+    this.game.updateLineData(event.type, event.position, true);
+
+  }
+
+  public getWinner(): PlayerTurn | undefined {
+
+    if ( this.gameProgress !== GameProgress.Finished || ! this.gameState || ! this.gameState.players.host || ! this.gameState.players.joined )
+      return undefined;
+    
+    return this.gameState.players.host.score > this.gameState.players.joined.score ? PlayerTurn.Host : PlayerTurn.Joined;
+
+  }
+
+  public playConfetti(): void {
+
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+    const duration = 15 * 1000;
+    const animationEnd = Date.now() + duration;
+
+    this.confettiTimer = setInterval(() => {
+
+      const timeLeft = animationEnd - Date.now();
+    
+      if ( timeLeft <= 0 && this.confettiTimer )
+        return clearInterval(this.confettiTimer);
+    
+      const particleCount = 50 * (timeLeft / duration);
+
+      confetti(Object.assign({}, defaults, { particleCount, origin: { x: this.utilities.randomInRange(0.1, 0.3), y: Math.random() - 0.2 } }));
+      confetti(Object.assign({}, defaults, { particleCount, origin: { x: this.utilities.randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
+
+    }, 250);
 
   }
 
