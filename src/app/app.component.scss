@@ -14,6 +14,7 @@ span.status {
   position: fixed;
   bottom: rem(20px);
   left: rem(20px);
+  user-select: none;
 
   &.dim { color: color(gray-light); }
   &.green { color: color(accent-green); }

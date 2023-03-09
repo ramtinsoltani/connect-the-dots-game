@@ -11,7 +11,7 @@
     name="peerId"
     placeholder="Peer ID of other player..."
     maxlength="6"
-    (keyup)="checkSubmitState(peerId.value)"
+    (keyup)="checkSubmitState(peerId.value, $event)"
     [disabled]="disabled">
   </div>
 </section>
@@ -25,7 +25,7 @@
     placeholder="Your display name..."
     maxlength="32"
     [value]="defaultName"
-    (keyup)="checkSubmitState(displayName.value)"
+    (keyup)="checkSubmitState(displayName.value, $event)"
     [disabled]="disabled">
   </div>
   <ng-container *ngIf="type === DialogType.NewGame">

@@ -19,9 +19,9 @@ export class GameService {
   };
 
   private state: GameState = cloneDeep(this.DEFAULT_STATE);
-
   private progress$ = new BehaviorSubject<GameProgress>(GameProgress.NotStarted);
   private isHost: boolean = false;
+  private sfx: { [name: string]: HTMLAudioElement } = {};
 
   public progress = new Observable<GameProgress>(observer => {
 
@@ -37,6 +37,15 @@ export class GameService {
   constructor(
     private peer: PeerService
   ) {
+
+    // Create mapping of all SFX files and pre-load them
+    for ( const audio of Object.values(SoundEffect) ) {
+
+      this.sfx[audio] = new Audio();
+      this.sfx[audio].src = `/assets/${audio}.mp3`;
+      this.sfx[audio].load();
+
+    }
 
     this.peer.connectionState.subscribe(state => {
 
@@ -67,6 +76,13 @@ export class GameService {
       this.updateGameProgress();
 
       this.onStateChanged.emit(cloneDeep(this.state));
+
+      // Play sfx
+      if ( data.filter(operation => operation.op === 'replace' && operation.path.match(/^\/board\/.Lines\/.+\/state/) && operation.value).length )
+        this.playSoundEffect(SoundEffect.Draw);
+      
+      if ( data.filter(operation => operation.op === 'replace' && operation.path.match(/^\/board\/cells\/.+\/state/) && operation.value !== CellState.Free).length )
+        this.playSoundEffect(SoundEffect.Score);
 
     });
 
@@ -261,6 +277,18 @@ export class GameService {
 
     this.onStateChanged.emit(cloneDeep(this.state));
 
+    // Play sfx
+    this.playSoundEffect(SoundEffect.Draw);
+
+    if ( cellsChecked.length && cellsChecked.reduce((a, b) => a || b) )
+      this.playSoundEffect(SoundEffect.Score);
+
+  }
+
+  public playSoundEffect(name: SoundEffect): void {
+
+    this.sfx[name].play();
+
   }
 
 }
@@ -319,6 +347,14 @@ export enum CellState {
   Free,
   HostPlayer,
   JoinedPlayer
+}
+
+export enum SoundEffect {
+  Draw = 'draw',
+  Disabled = 'disabled',
+  Score = 'score',
+  Win = 'win',
+  Lose = 'lose'
 }
 
 export interface LineData {

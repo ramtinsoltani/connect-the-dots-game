@@ -36,7 +36,8 @@
     [hostName]="gameState.players.host?.name"
     [joinedName]="gameState.players.joined?.name"
     [canPlay]="(isPlayerHost() && gameState.currentTurn === PlayerTurn.Host) || (! isPlayerHost() && gameState.currentTurn === PlayerTurn.Joined)"
-    (onLineClicked)="drawLine($event)">
+    (onLineClicked)="drawLine($event)"
+    (onDisabledClick)="disabledLineDraw($event)">
     </app-board>
   </ng-container>
 </main>

@@ -8,6 +8,7 @@
   gap: rem(20px);
   width: 100%;
   max-width: 500px;
+  user-select: none;
 }
 
 header {
@@ -32,6 +33,7 @@ footer {
 
     .id {
       color: color(accent-blue);
+      user-select: all;
     }
   }
 }
@@ -85,6 +87,7 @@ label {
 input[type=text] {
   width: 100%;
   flex-shrink: 1;
+  user-select: all;
   
   &.uppercase {
     text-transform: uppercase;

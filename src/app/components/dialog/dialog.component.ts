@@ -57,7 +57,7 @@ export class DialogComponent implements AfterViewInit {
     
   }
 
-  public checkSubmitState(value: string): void {
+  public checkSubmitState(value: string, event?: KeyboardEvent): void {
 
     if ( this.type === DialogType.Connect ) {
 
@@ -76,9 +76,14 @@ export class DialogComponent implements AfterViewInit {
 
     this.detector.detectChanges();
 
+    if ( event?.key === 'Enter' )
+      this.submit();
+
   }
 
   public submit(): void {
+
+    if ( this.submitDisabled ) return;
 
     if ( this.type === DialogType.Connect && this.peerIdElement ) {
 

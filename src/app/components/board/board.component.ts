@@ -32,6 +32,9 @@ export class BoardComponent implements OnChanges {
   @Output()
   public onLineClicked = new EventEmitter<BoardLineEvent>();
 
+  @Output()
+  public onDisabledClick = new EventEmitter<BoardLineEvent>();
+
   public dots: Array<Array<boolean>> = [];
 
   public ngOnChanges(changes: SimpleChanges): void {
@@ -92,7 +95,10 @@ export class BoardComponent implements OnChanges {
 
     const lines = type === 'h' ? this.hLines : this.vLines;
 
-    if ( ! this.canPlay || ! lines || lines[position[0]][position[1]].state ) return;
+    if ( ! lines ) return;
+
+    if ( ! this.canPlay || lines[position[0]][position[1]].state )
+      return this.onDisabledClick.emit({ type, position })
 
     this.onLineClicked.emit({ type, position });
 

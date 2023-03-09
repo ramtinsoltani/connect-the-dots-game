@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { GameService, GameProgress, GameSize, GameState, PlayerTurn } from './services/game.service';
+import { GameService, GameProgress, GameSize, GameState, PlayerTurn, SoundEffect } from './services/game.service';
 import { PeerService, ConnectionStatus } from './services/peer.service';
 import { DialogType, DialogData, ConnectDialogData, NewGameDialogData, JoinGameDialogData } from './components/dialog/dialog.component';
 import { BoardLineEvent } from './components/board/board.component';
@@ -52,13 +52,22 @@ export class AppComponent implements OnInit {
       if ( state === GameProgress.AwaitingPlayers )
         this.awaitingInput = true;
 
-      // Play confetti animation if player won
+      // Play confetti animation if player won (and sfx)
       if ( state === GameProgress.Finished ) {
 
         const winner = this.getWinner();
 
-        if ( (this.isPlayerHost() && winner === PlayerTurn.Host) || (! this.isPlayerHost() && winner === PlayerTurn.Joined) )
+        if ( (this.isPlayerHost() && winner === PlayerTurn.Host) || (! this.isPlayerHost() && winner === PlayerTurn.Joined) ) {
+
           this.playConfetti();
+          this.game.playSoundEffect(SoundEffect.Win);
+
+        }
+        else {
+
+          this.game.playSoundEffect(SoundEffect.Lose);
+
+        }
 
       }
 
@@ -122,6 +131,12 @@ export class AppComponent implements OnInit {
   public drawLine(event: BoardLineEvent): void {
 
     this.game.updateLineData(event.type, event.position, true);
+
+  }
+
+  public disabledLineDraw(event: BoardLineEvent): void {
+
+    this.game.playSoundEffect(SoundEffect.Disabled);
 
   }
 
