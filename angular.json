@@ -3,7 +3,7 @@
   "version": 1,
   "newProjectRoot": "projects",
   "projects": {
-    "connect-the-dots-game": {
+    "dots-and-boxes": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
@@ -41,7 +41,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/connect-the-dots-game",
+            "outputPath": "dist/dots-and-boxes",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -95,10 +95,10 @@
           "builder": "@angular-devkit/build-angular:dev-server",
           "configurations": {
             "production": {
-              "browserTarget": "connect-the-dots-game:build:production"
+              "browserTarget": "dots-and-boxes:build:production"
             },
             "development": {
-              "browserTarget": "connect-the-dots-game:build:development"
+              "browserTarget": "dots-and-boxes:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -106,7 +106,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "connect-the-dots-game:build"
+            "browserTarget": "dots-and-boxes:build"
           }
         }
       }

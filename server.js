@@ -2,7 +2,7 @@ const path = require('path');
 const express = require('express');
 const { ExpressPeerServer } = require('peer');
 const app = express();
-const FE_ROOT_DIR = path.resolve(__dirname, 'dist', 'connect-the-dots-game');
+const FE_ROOT_DIR = path.resolve(__dirname, 'dist', 'dots-and-boxes');
 const PORT = process.env.PORT || 3000;
 
 const server = app.listen(PORT, () => {

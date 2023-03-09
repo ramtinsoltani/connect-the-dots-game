@@ -1,6 +1,6 @@
-# ConnectTheDotsGame
+# Dots And Boxes Game
 
-Simple multiplayer "connect the dots game" made with Angular 15, [PeerJS](https://peerjs.com/), and ExpressJS.
+Simple multiplayer "dots and boxes" made with Angular 15, [PeerJS](https://peerjs.com/), and ExpressJS.
 
 # Quick Start
 

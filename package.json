@@ -1,5 +1,5 @@
 {
-  "name": "connect-the-dots-game",
+  "name": "dots-and-boxes",
   "description": "Peer-to-peer connect the dots game",
   "version": "0.0.0",
   "scripts": {
@@ -13,7 +13,7 @@
   "private": true,
   "license": "MIT",
   "author": "Ramtin Soltani <ramtinsoltani93@gmail.com>",
-  "repository": "github:ramtinsoltani/connect-the-dots-game",
+  "repository": "github:ramtinsoltani/dots-and-boxes",
   "dependencies": {
     "@angular/animations": "^15.2.0",
     "@angular/common": "^15.2.0",
