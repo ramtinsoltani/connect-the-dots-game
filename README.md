@@ -6,7 +6,7 @@ Simple multiplayer "connect the dots game" made with Angular 15, [PeerJS](https:
 
 ```bash
 npm install # Installs dependencies
-npm start # Runs the game locally
+npm run local # Builds and runs the game locally
 ```
 
 # Deployment
