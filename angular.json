@@ -51,6 +51,19 @@
             "inlineStyleLanguage": "scss",
             "assets": [
               "src/favicon.ico",
+              "src/favicon-16x16.png",
+              "src/favicon-32x32.png",
+              "src/site.webmanifest",
+              "src/browserconfig.xml",
+              "src/android-chrome-192x192.png",
+              "src/android-chrome-512x512.png",
+              "src/apple-touch-icon.png",
+              "src/safari-pinned-tab.svg",
+              "src/mstile-70x70.png",
+              "src/mstile-144x144.png",
+              "src/mstile-150x150.png",
+              "src/mstile-310x150.png",
+              "src/mstile-310x310.png",
               "src/assets"
             ],
             "styles": [
