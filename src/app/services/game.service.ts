@@ -280,7 +280,6 @@ export interface GameState {
 }
 
 export enum GameSize {
-  Test = 'test',
   Small = 'small',
   Medium = 'medium',
   Large = 'large',
@@ -288,7 +287,6 @@ export enum GameSize {
 }
 
 export enum GameBoardSize {
-  'test' = 2,
   'small' = 6,
   'medium' = 8,
   'large' = 10,
