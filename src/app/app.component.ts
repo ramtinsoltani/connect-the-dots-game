@@ -62,6 +62,10 @@ export class AppComponent implements OnInit {
 
       }
 
+      // Stop confetti if playing and state has changed
+      if ( state !== GameProgress.Finished && this.confettiTimer )
+        clearInterval(this.confettiTimer);
+
       this.detector.detectChanges();
 
     });
@@ -110,9 +114,6 @@ export class AppComponent implements OnInit {
   }
 
   public onNewGameClicked(): void {
-
-    if ( this.confettiTimer )
-      clearInterval(this.confettiTimer);
 
     this.game.startNewGame();
 

@@ -90,6 +90,9 @@ export class PeerService {
 
       this.connectionState$.next(ConnectionStatus.Disconnected);
 
+      if ( this.reconnectionTimer )
+        clearInterval(this.reconnectionTimer);
+
       this.reconnectionTimer = setInterval(() => {
 
         if ( this.peer.disconnected ) {
