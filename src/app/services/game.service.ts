@@ -1,5 +1,5 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { PeerService, ConnectionStatus } from './peer.service';
+import { PeerService, ConnectionStatus, Operation } from './peer.service';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { cloneDeep, flatten } from 'lodash-es';
 import { applyPatch, compare } from 'fast-json-patch';
@@ -83,19 +83,32 @@ export class GameService {
         // If state of other player has more moves...
         if ( (data.state.moves as number) > (this.state.moves as number) ) {
 
+          // Get 
+          const patch = compare(this.state, data.state);
+
           // Sync state
-          this.state = cloneDeep(data.state);
+          applyPatch(this.state, patch, true, true);
 
           // Update game progress and emit changes
           this.updateGameProgress();
           this.onStateChanged.emit(cloneDeep(this.state));
 
+          // Play sound effects
+          this.playSoundEffectFromPatch(patch);
+
           console.debug('State synced');
+
+        }
+        else if ( (data.state.moves as number) < (this.state.moves as number) ) {
+
+          console.debug('State of other player is behind');
+
+          this.syncState();
 
         }
         else {
 
-          console.debug('State is already in-sync or ahead');
+          console.debug('State is in-sync');
 
         }
 
@@ -110,12 +123,7 @@ export class GameService {
 
       this.onStateChanged.emit(cloneDeep(this.state));
 
-      // Play sfx
-      if ( data.filter(operation => operation.op === 'replace' && operation.path.match(/^\/board\/.Lines\/.+\/state/) && operation.value).length )
-        this.playSoundEffect(SoundEffect.Draw);
-      
-      if ( data.filter(operation => operation.op === 'replace' && operation.path.match(/^\/board\/cells\/.+\/state/) && operation.value !== CellState.Free).length )
-        this.playSoundEffect(SoundEffect.Score);
+      this.playSoundEffectFromPatch(data);
 
     });
 
@@ -205,6 +213,17 @@ export class GameService {
   private messageIsStateSync(data: any): data is StateSyncData {
 
     return data.sync === true;
+
+  }
+
+  private playSoundEffectFromPatch(patch: Operation[]): void {
+
+    // Play sfx
+    if ( patch.filter(operation => operation.op === 'replace' && operation.path.match(/^\/board\/.Lines\/.+\/state/) && operation.value).length )
+    this.playSoundEffect(SoundEffect.Draw);
+
+    if ( patch.filter(operation => operation.op === 'replace' && operation.path.match(/^\/board\/cells\/.+\/state/) && operation.value !== CellState.Free).length )
+    this.playSoundEffect(SoundEffect.Score);
 
   }
 
