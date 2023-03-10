@@ -287,7 +287,11 @@ export class GameService {
 
   public playSoundEffect(name: SoundEffect): void {
 
-    this.sfx[name].play();
+    const sfx = new Audio();
+
+    sfx.src = this.sfx[name].src;
+    sfx.load();
+    sfx.play();
 
   }
 
