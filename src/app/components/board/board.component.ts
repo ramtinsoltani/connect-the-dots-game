@@ -1,5 +1,5 @@
-import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges } from '@angular/core';
-import { CellData, GameSize, GameBoardSize, LineData, CellState } from 'src/app/services/game.service';
+import { Component, Input, Output, EventEmitter, OnChanges, SimpleChanges, ChangeDetectorRef } from '@angular/core';
+import { CellData, GameSize, LineData, CellState } from 'src/app/services/game.service';
 
 @Component({
   selector: 'app-board',
@@ -29,13 +29,24 @@ export class BoardComponent implements OnChanges {
   @Input()
   public joinedName?: string;
 
+  @Input()
+  public highlightHLine?: [number, number];
+
+  @Input()
+  public highlightVLine?: [number, number];
+
   @Output()
   public onLineClicked = new EventEmitter<BoardLineEvent>();
 
   @Output()
   public onDisabledClick = new EventEmitter<BoardLineEvent>();
 
-  public dots: Array<Array<boolean>> = [];
+  public dots: Array<Array<DotData>> = [];
+  public highlightAllowed: boolean = false;
+
+  constructor(
+    private detector: ChangeDetectorRef
+  ) { }
 
   public ngOnChanges(changes: SimpleChanges): void {
 
@@ -44,7 +55,7 @@ export class BoardComponent implements OnChanges {
 
       this.dots = Array(changes['cells'].currentValue.length + 1)
       .fill(null).map(() => Array(changes['cells'].currentValue.length + 1)
-      .fill(null).map(() => false));
+      .fill(null).map(() => ({ state: false, hover: false, highlight: false })));
 
     }
 
@@ -57,8 +68,8 @@ export class BoardComponent implements OnChanges {
 
           if ( this.hLines[y][x].state ) {
 
-            this.dots[y][x] = true;
-            this.dots[y][x + 1] = true;
+            this.dots[y][x].state = true;
+            this.dots[y][x + 1].state = true;
 
           }
 
@@ -72,8 +83,8 @@ export class BoardComponent implements OnChanges {
 
           if ( this.vLines[y][x].state ) {
 
-            this.dots[y][x] = true;
-            this.dots[y + 1][x] = true;
+            this.dots[y][x].state = true;
+            this.dots[y + 1][x].state = true;
 
           }
 
@@ -82,7 +93,66 @@ export class BoardComponent implements OnChanges {
       }
 
     }
-    
+
+    // Highlight dots if necessary
+    if ( changes['highlightHLine'] && ! changes['highlightHLine'].firstChange ) {
+
+      const state = changes['highlightHLine']?.currentValue?.length;
+      const position = state ? changes['highlightHLine'].currentValue : changes['highlightHLine'].previousValue;
+
+      // If highlighting a new set of dots, unhighlight all previous ones
+      if ( state ) {
+
+        for ( const row of this.dots ) {
+
+          for ( const dot of row ) {
+
+            dot.highlight = false;
+
+          }
+
+        }
+
+      }
+
+      this.dots[position[0]][position[1]].highlight = state;
+      this.dots[position[0]][position[1] + 1].highlight = state;
+
+      setTimeout(() => this.highlightAllowed = false, 1000);
+
+      this.highlightAllowed = true;
+
+    }
+
+    if ( changes['highlightVLine'] && ! changes['highlightVLine'].firstChange ) {
+
+      const state = changes['highlightVLine']?.currentValue?.length;
+      const position = state ? changes['highlightVLine'].currentValue : changes['highlightVLine'].previousValue;
+
+      // If highlighting a new set of dots, unhighlight all previous ones
+      if ( state ) {
+
+        for ( const row of this.dots ) {
+
+          for ( const dot of row ) {
+
+            dot.highlight = false;
+
+          }
+
+        }
+
+      }
+
+      this.dots[position[0]][position[1]].highlight = state;
+      this.dots[position[0] + 1][position[1]].highlight = state;
+
+      setTimeout(() => this.highlightAllowed = false, 1000);
+
+      this.highlightAllowed = true;
+
+    }
+
   }
 
   public getPlayerInitial(cellState: CellState): string | undefined {
@@ -104,9 +174,49 @@ export class BoardComponent implements OnChanges {
 
   }
 
+  public onLineMouseEnter(type: BoardLineEvent['type'], position: BoardLineEvent['position']): void {
+
+    const dots: [DotData, DotData] = [
+      this.dots[position[0]][position[1]],
+      this.dots[position[0] + (type === 'h' ? 0 : 1)][position[1] + (type === 'h' ? 1 : 0)]
+    ];
+
+    if ( dots[0].hover && dots[1].hover )
+      return;
+
+    dots[0].hover = true;
+    dots[1].hover = true;
+
+    this.detector.detectChanges();
+
+  }
+
+  public onLineMouseLeave(type: BoardLineEvent['type'], position: BoardLineEvent['position']): void {
+
+    const dots: [DotData, DotData] = [
+      this.dots[position[0]][position[1]],
+      this.dots[position[0] + (type === 'h' ? 0 : 1)][position[1] + (type === 'h' ? 1 : 0)]
+    ];
+
+    if ( ! dots[0].hover && ! dots[1].hover )
+      return;
+
+    dots[0].hover = false;
+    dots[1].hover = false;
+
+    this.detector.detectChanges();
+    
+  }
+
 }
 
 export interface BoardLineEvent {
   type: 'h' | 'v',
   position: [number, number]
+}
+
+export interface DotData {
+  state: boolean,
+  hover: boolean,
+  highlight: boolean
 }

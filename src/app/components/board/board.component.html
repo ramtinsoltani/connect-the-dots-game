@@ -16,8 +16,10 @@
     <div
     *ngFor="let line of row; index as j"
     class="vline"
-    [ngClass]="{ drawn: line.state }"
-    (click)="onLineClick('v', [i, j])">
+    [ngClass]="{ drawn: line.state, highlight: highlightAllowed && highlightVLine && highlightVLine[0] === i && highlightVLine[1] === j }"
+    (click)="onLineClick('v', [i, j])"
+    (mouseenter)="onLineMouseEnter('v', [i, j])"
+    (mouseleave)="onLineMouseLeave('v', [i, j])">
     </div>
   </div>
 </div>
@@ -26,13 +28,19 @@
     <div
     *ngFor="let line of row; index as j"
     class="hline"
-    [ngClass]="{ drawn: line.state }"
-    (click)="onLineClick('h', [i, j])">
+    [ngClass]="{ drawn: line.state, highlight: highlightAllowed && highlightHLine && highlightHLine[0] === i && highlightHLine[1] === j }"
+    (click)="onLineClick('h', [i, j])"
+    (mouseenter)="onLineMouseEnter('h', [i, j])"
+    (mouseleave)="onLineMouseLeave('h', [i, j])">
     </div>
   </div>
 </div>
 <div class="layer dots">
   <div class="row" *ngFor="let row of dots">
-    <div class="dot" *ngFor="let dot of row" [ngClass]="{ drawn: dot }"></div>
+    <div class="dot" *ngFor="let dot of row" [ngClass]="{
+      drawn: dot.state,
+      hover: dot.hover,
+      highlight: highlightAllowed && dot.highlight
+    }"></div>
   </div>
 </div>

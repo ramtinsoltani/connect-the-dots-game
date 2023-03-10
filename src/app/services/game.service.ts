@@ -34,6 +34,8 @@ export class GameService {
   /** Emits immutable game state data when state is changed. */
   public onStateChanged = new EventEmitter<GameState>();
 
+  public onHighlightLine = new EventEmitter<{ type: 'h'|'v', position: [number, number] }>();
+
   constructor(
     private peer: PeerService
   ) {
@@ -93,6 +95,9 @@ export class GameService {
           this.updateGameProgress();
           this.onStateChanged.emit(cloneDeep(this.state));
 
+          // Highlight line if necessary
+          this.updateHighlightLine(patch);
+
           // Play sound effects
           this.playSoundEffectFromPatch(patch);
 
@@ -122,6 +127,9 @@ export class GameService {
       this.updateGameProgress();
 
       this.onStateChanged.emit(cloneDeep(this.state));
+
+      // Highlight line if necessary
+      this.updateHighlightLine(data);
 
       this.playSoundEffectFromPatch(data);
 
@@ -218,12 +226,34 @@ export class GameService {
 
   private playSoundEffectFromPatch(patch: Operation[]): void {
 
-    // Play sfx
     if ( patch.filter(operation => operation.op === 'replace' && operation.path.match(/^\/board\/.Lines\/.+\/state/) && operation.value).length )
-    this.playSoundEffect(SoundEffect.Draw);
+      this.playSoundEffect(SoundEffect.Draw);
 
     if ( patch.filter(operation => operation.op === 'replace' && operation.path.match(/^\/board\/cells\/.+\/state/) && operation.value !== CellState.Free).length )
-    this.playSoundEffect(SoundEffect.Score);
+      this.playSoundEffect(SoundEffect.Score);
+
+  }
+
+  private updateHighlightLine(patch: Operation[]): void {
+
+    // Only update if current turn is player (meaning the line update change has been done by the other player)
+    if ( (this.isHost && this.state.currentTurn !== PlayerTurn.Host) || (! this.isHost && this.state.currentTurn !== PlayerTurn.Joined) )
+      return;
+
+    const lineUpdates = patch.filter(operation => operation.op === 'replace' && operation.path.match(/^\/board\/.Lines\/.+\/state/) && operation.value);
+
+    if ( lineUpdates.length ) {
+
+      const match = lineUpdates[0].path.match(/^\/board\/(?<type>.)Lines\/(?<y>\d+)\/(?<x>\d+)\/.*/)?.groups;
+
+      if ( ! match ) return;
+
+      this.onHighlightLine.emit({
+        type: match['type'] as any,
+        position: [+match['y'], +match['x']]
+      });
+
+    }
 
   }
 

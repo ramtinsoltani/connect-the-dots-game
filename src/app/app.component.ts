@@ -28,6 +28,8 @@ export class AppComponent implements OnInit {
   public gameProgress!: GameProgress;
   public awaitingInput!: boolean;
   public gameState?: GameState;
+  public highlightHLine?: [number, number];
+  public highlightVLine?: [number, number];
 
   constructor(
     private detector: ChangeDetectorRef,
@@ -84,6 +86,26 @@ export class AppComponent implements OnInit {
     this.game.onStateChanged.subscribe(state => {
 
       this.gameState = state;
+
+      this.detector.detectChanges();
+
+    });
+
+    this.game.onHighlightLine.subscribe(line => {
+
+      if ( line.type === 'h' ) {
+
+        this.highlightHLine = line.position;
+        this.highlightVLine = undefined;
+
+      }
+
+      if ( line.type === 'v' ) {
+        
+        this.highlightVLine = line.position;
+        this.highlightHLine = undefined;
+
+      }
 
       this.detector.detectChanges();
 

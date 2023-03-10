@@ -53,15 +53,19 @@
         height: 100%;
         width: rem(4px);
         background-color: transparent;
-        transition: background-color .1s ease-in-out;
       }
 
       &:not(.drawn):hover::after {
-        background-color: color(gray-medium);
+        background-color: color(gray-light);
       }
 
-      &.drawn::after {
+      &.drawn:not(.highlight)::after {
         background-color: color(gray-lightest);
+      }
+
+      &.highlight::after {
+        animation: highlight 1s ease-in-out;
+        animation-fill-mode: forwards;
       }
     }
 
@@ -78,15 +82,19 @@
         width: 100%;
         height: rem(4px);
         background-color: transparent;
-        transition: background-color .1s ease-in-out;
       }
 
       &:not(.drawn):hover::after {
-        background-color: color(gray-medium);
+        background-color: color(gray-light);
       }
 
-      &.drawn::after {
+      &.drawn:not(.highlight)::after {
         background-color: color(gray-lightest);
+      }
+
+      &.highlight::after {
+        animation: highlight 1s ease-in-out;
+        animation-fill-mode: forwards;
       }
     }
 
@@ -95,10 +103,18 @@
       height: rem(14px);
       border-radius: 50%;
       background-color: color(gray-medium);
-      transition: background-color .1s ease-in-out;
 
-      &.drawn {
+      &.drawn:not(.highlight) {
         background-color: color(gray-lightest);
+      }
+
+      &:not(.drawn).hover {
+        background-color: color(gray-light);
+      }
+
+      &.highlight {
+        animation: highlight 1s ease-in-out;
+        animation-fill-mode: forwards;
       }
     }
   }
@@ -130,4 +146,11 @@
       gap: rem(36px);
     }
   }
+}
+
+@keyframes highlight {
+  0% { background-color: color(gray-lightest); }
+  20% { background-color: color(accent-yellow); }
+  80% { background-color: color(accent-yellow); }
+  100% { background-color: color(gray-lightest); }
 }
