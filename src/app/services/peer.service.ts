@@ -4,6 +4,7 @@ import { environment } from '../../environments/environment';
 import { UtilitiesService } from './utilities.service';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { Operation } from 'fast-json-patch';
+import { StateSyncData } from './game.service';
 
 export { Operation } from 'fast-json-patch';
 
@@ -22,7 +23,7 @@ export class PeerService {
   private peerConnectionId?: string;
   private reconnectionTimer?: NodeJS.Timer;
   private connectionState$ = new BehaviorSubject<ConnectionStatus>(ConnectionStatus.NotConnected);
-  private messages$ = new Subject<Operation[]>();
+  private messages$ = new Subject<Operation[] | StateSyncData>();
 
   public readonly id = this.peer.id;
   public readonly connectionState = new Observable<ConnectionStatus>(observer => {
@@ -32,7 +33,7 @@ export class PeerService {
     return () => sub.unsubscribe();
 
   });
-  public readonly messages = new Observable<Operation[]>(observer => {
+  public readonly messages = new Observable<Operation[] | StateSyncData>(observer => {
 
     const sub = this.messages$.subscribe(value => observer.next(value));
 
@@ -125,7 +126,7 @@ export class PeerService {
 
   }
 
-  public send(data: Operation[]): void {
+  public send<T=Operation[]>(data: T): void {
 
     if ( ! this.conn || ! [ConnectionStatus.Connected, ConnectionStatus.Joined].includes(this.connectionState$.value) )
       return console.warn('No peer connection!');

@@ -58,6 +58,10 @@ export class GameService {
         // If game was not started, move onto next step
         if ( this.progress$.value === GameProgress.NotStarted )
           this.progress$.next(GameProgress.AwaitingPlayers);
+        
+        // If game is in progress, a state sync might be needed
+        if ( this.progress$.value === GameProgress.InProgress )
+          this.syncState();
 
       }
       // If disconnected while waiting for players
@@ -71,6 +75,35 @@ export class GameService {
 
     this.peer.messages.subscribe(data => {
 
+      // If syncing states
+      if ( this.messageIsStateSync(data) ) {
+
+        console.debug('Sync message retrieved');
+
+        // If state of other player has more moves...
+        if ( (data.state.moves as number) > (this.state.moves as number) ) {
+
+          // Sync state
+          this.state = cloneDeep(data.state);
+
+          // Update game progress and emit changes
+          this.updateGameProgress();
+          this.onStateChanged.emit(cloneDeep(this.state));
+
+          console.debug('State synced');
+
+        }
+        else {
+
+          console.debug('State is already in-sync or ahead');
+
+        }
+
+        return;
+
+      }
+
+      // Otherwise, message is patch operations
       applyPatch(this.state, data, true, true);
       
       this.updateGameProgress();
@@ -118,6 +151,9 @@ export class GameService {
       // Set current turn to host (default starting player)
       this.state.currentTurn = PlayerTurn.Host;
 
+      // Set moves to 0
+      this.state.moves = 0;
+
       // Populate board data
       this.populateBoardData();
 
@@ -152,6 +188,23 @@ export class GameService {
     }
 
     return false;
+
+  }
+
+  private syncState(): void {
+
+    console.debug('Sending state for sync check');
+
+    this.peer.send<StateSyncData>({
+      sync: true,
+      state: cloneDeep(this.state)
+    });
+
+  }
+
+  private messageIsStateSync(data: any): data is StateSyncData {
+
+    return data.sync === true;
 
   }
 
@@ -240,6 +293,9 @@ export class GameService {
     // Update line data
     this.state.board[type === 'h' ? 'hLines' : 'vLines'][position[0]][position[1]].state = state;
 
+    // Update moves
+    (this.state.moves as number)++;
+
     // Check and update cells
     const cellsChecked: boolean[] = [];
     
@@ -297,6 +353,11 @@ export class GameService {
 
 }
 
+export interface StateSyncData {
+  sync: true,
+  state: GameState
+}
+
 export interface GameState {
   size?: GameSize,
   players: {
@@ -304,6 +365,7 @@ export interface GameState {
     joined?: PlayerState
   },
   currentTurn?: PlayerTurn,
+  moves?: number,
   board: {
     cells: CellData[][],
     hLines: LineData[][],
