@@ -5,6 +5,7 @@ import { DialogType, DialogData, ConnectDialogData, NewGameDialogData, JoinGameD
 import { BoardLineEvent } from './components/board/board.component';
 import confetti from 'canvas-confetti';
 import { UtilitiesService } from './services/utilities.service';
+import { environment } from '../environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -19,6 +20,7 @@ export class AppComponent implements OnInit {
   public ConnectionStatus = ConnectionStatus;
   public GameProgress = GameProgress;
   public PlayerTurn = PlayerTurn;
+  public appVersion = environment.version;
 
   public working = false;
   public id = this.peer.id;

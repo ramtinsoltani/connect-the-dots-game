@@ -9,15 +9,25 @@ main {
   min-height: 100vh;
 }
 
-span.status {
+span.status,
+span.version {
   font-size: rem(14px);
   position: fixed;
   bottom: rem(20px);
-  left: rem(20px);
   user-select: none;
+  text-transform: uppercase;
+}
+
+span.status {
+  left: rem(20px);
 
   &.dim { color: color(gray-light); }
   &.green { color: color(accent-green); }
   &.yellow { color: color(accent-yellow); }
   &.red { color: color(accent-red); }
+}
+
+span.version {
+  right: rem(20px);
+  color: color(gray-light);
 }
