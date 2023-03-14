@@ -1,7 +1,7 @@
 {
   "name": "dots-and-boxes",
   "description": "Peer-to-peer connect the dots game",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "scripts": {
     "start": "node server.js",
     "build:dev": "npx ng build --aot --configuration=development",
