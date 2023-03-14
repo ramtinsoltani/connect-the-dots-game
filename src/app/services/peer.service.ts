@@ -5,6 +5,7 @@ import { UtilitiesService } from './utilities.service';
 import { BehaviorSubject, Subject, Observable } from 'rxjs';
 import { Operation } from 'fast-json-patch';
 import { StateSyncData } from './game.service';
+import { ChatMessage } from './chat.service';
 
 export { Operation } from 'fast-json-patch';
 
@@ -24,6 +25,7 @@ export class PeerService {
   private reconnectionTimer?: NodeJS.Timer;
   private connectionState$ = new BehaviorSubject<ConnectionStatus>(ConnectionStatus.NotConnected);
   private messages$ = new Subject<Operation[] | StateSyncData>();
+  private chatMessages$ = new Subject<ChatMessage>();
 
   public readonly id = this.peer.id;
   public readonly connectionState = new Observable<ConnectionStatus>(observer => {
@@ -36,6 +38,13 @@ export class PeerService {
   public readonly messages = new Observable<Operation[] | StateSyncData>(observer => {
 
     const sub = this.messages$.subscribe(value => observer.next(value));
+
+    return () => sub.unsubscribe();
+
+  });
+  public readonly chatMessages = new Observable<ChatMessage>(observer => {
+
+    const sub = this.chatMessages$.subscribe(value => observer.next(value));
 
     return () => sub.unsubscribe();
 
@@ -72,7 +81,7 @@ export class PeerService {
 
       this.connectionState$.next(ConnectionStatus.Connected);
 
-      conn.on('data', data => this.messages$.next(data as Operation[]));
+      conn.on('data', data => this.handleIncomingMessage(data));
 
       conn.on('close', () => {
 
@@ -126,6 +135,21 @@ export class PeerService {
 
   }
 
+  private isIncomingMessageChatData(message: any): message is ChatMessage {
+
+    return 'sender' in message && 'message' in message && 'timestamp' in message;
+
+  }
+
+  private handleIncomingMessage(data: any): void {
+
+    if ( this.isIncomingMessageChatData(data) )
+      this.chatMessages$.next(data);
+    else
+      this.messages$.next(data);
+
+  }
+
   public send<T=Operation[]>(data: T): void {
 
     if ( ! this.conn || ! [ConnectionStatus.Connected, ConnectionStatus.Joined].includes(this.connectionState$.value) )
@@ -141,7 +165,7 @@ export class PeerService {
 
     this.conn = this.peer.connect(id);
 
-    this.conn.on('data', data => this.messages$.next(data as Operation[]));
+    this.conn.on('data', data => this.handleIncomingMessage(data));
 
     this.conn.on('open', () => {
 

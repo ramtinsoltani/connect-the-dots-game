@@ -480,7 +480,8 @@ export enum SoundEffect {
   Score = 'score',
   Win = 'win',
   Lose = 'lose',
-  Draw = 'draw'
+  Draw = 'draw',
+  Notification = 'notification'
 }
 
 export interface LineData {

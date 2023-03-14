@@ -1,0 +1,31 @@
+<div class="chat-pane" [ngClass]="{ open }">
+  <div #messageContainer class="messages" [scrollTop]="messageContainer.scrollHeight">
+    <div class="message" *ngFor="let message of messages">
+      <div class="message-header">
+        <span
+        class="sender"
+        [ngClass]="{
+          host: message.sender === MessageSender.Host,
+          joined: message.sender === MessageSender.Joined
+        }">
+          {{ getSenderName(message.sender) }}
+        </span>
+        <span class="date">
+          {{ message.timestamp | date:'shortTime' }}
+        </span>
+      </div>
+      <div class="message-body">{{ message.message }}</div>
+    </div>
+  </div>
+  <div class="controls">
+    <input
+    type="text"
+    #message
+    name="message"
+    placeholder="Write a message..."
+    maxlength="256"
+    (keyup)="onMessageKeyUp(message.value, $event)"
+    [disabled]="locked">
+    <button [disabled]="locked || ! message.value.trim()" (click)="sendMessage(message.value)">Send</button>
+  </div>
+</div>

@@ -42,26 +42,6 @@ footer.with-label {
   justify-content: space-between;
 }
 
-button {
-  outline: none;
-  border: none;
-  font-family: Rubik, sans-serif;
-  background-color: color(accent-blue);
-  color: color(gray-lightest);
-  font-size: rem(14px);
-  font-weight: 500;
-  border-radius: 3px;
-  padding: rem(10px) rem(15px);
-  cursor: pointer;
-  transition: background-color .1s ease-in-out, color .1s ease-in-out;
-}
-
-button:disabled {
-  cursor: default;
-  background-color: color(gray-light);
-  color: color(gray-lighter);
-}
-
 section {
   display: flex;
   padding: 0 rem(20px);
@@ -77,49 +57,4 @@ section {
   &.small {
     flex-basis: 0;
   }
-}
-
-label {
-  font-size: rem(12px);
-  font-weight: 500;
-}
-
-input[type=text] {
-  width: 100%;
-  flex-shrink: 1;
-  user-select: all;
-  
-  &.uppercase {
-    text-transform: uppercase;
-  }
-}
-
-input[type=text]::placeholder {
-  text-transform: none;
-  color: color(gray-light);
-}
-
-input[type=text]:disabled {
-  color: color(gray-light);
-}
-
-input[type=text],
-select {
-  outline: none;
-  border: none;
-  appearance: none;
-  font-size: rem(14px);
-  font-family: Rubik, sans-serif;
-  padding: rem(9px) rem(10px);
-  border-radius: 3px;
-  background-color: color(gray-medium);
-  color: color(gray-lighter);
-}
-
-select {
-  min-width: rem(130px);
-  background-repeat: no-repeat;
-  background-position: right rem(10px) center;
-  background-size: rem(10px) rem(16px);
-  background-image: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 512"><path fill="%23545454" d="M137.4 374.6c12.5 12.5 32.8 12.5 45.3 0l128-128c9.2-9.2 11.9-22.9 6.9-34.9s-16.6-19.8-29.6-19.8L32 192c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l128 128z"/></svg>');
 }

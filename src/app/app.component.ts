@@ -5,6 +5,7 @@ import { DialogType, DialogData, ConnectDialogData, NewGameDialogData, JoinGameD
 import { BoardLineEvent } from './components/board/board.component';
 import confetti from 'canvas-confetti';
 import { UtilitiesService } from './services/utilities.service';
+import { ChatService } from './services/chat.service';
 import { environment } from '../environments/environment';
 
 @Component({
@@ -20,6 +21,7 @@ export class AppComponent implements OnInit {
   public ConnectionStatus = ConnectionStatus;
   public GameProgress = GameProgress;
   public PlayerTurn = PlayerTurn;
+  public Math = Math;
   public appVersion = environment.version;
 
   public working = false;
@@ -30,11 +32,15 @@ export class AppComponent implements OnInit {
   public gameState?: GameState;
   public highlightHLine?: [number, number];
   public highlightVLine?: [number, number];
+  public chatOpened: boolean = false;
+  public unreadChat: number = 0;
+  public notificationShake: boolean = false;
 
   constructor(
     private detector: ChangeDetectorRef,
     private game: GameService,
     private peer: PeerService,
+    private chat: ChatService,
     private utilities: UtilitiesService
   ) { }
   
@@ -114,6 +120,48 @@ export class AppComponent implements OnInit {
         this.highlightHLine = undefined;
 
       }
+
+      this.detector.detectChanges();
+
+    });
+
+    this.chat.chatData.subscribe(data => {
+
+      if ( this.chatOpened ) return;
+
+      if ( ! data.length ) {
+
+        this.unreadChat = 0;
+        return;
+
+      }
+
+      this.unreadChat++;
+
+      // Play SFX
+      this.game.playSoundEffect(SoundEffect.Notification);
+
+      // If animation already playing
+      if ( this.notificationShake ) {
+
+        this.notificationShake = false;
+        this.detector.detectChanges();
+
+      }
+
+      this.notificationShake = true;
+
+      const unreadWhenShakeStarted = this.unreadChat;
+
+      setTimeout(() => {
+
+        if ( this.unreadChat > unreadWhenShakeStarted )
+          return;
+
+        this.notificationShake = false;
+        this.detector.detectChanges();
+
+      }, 500);
 
       this.detector.detectChanges();
 
@@ -205,6 +253,30 @@ export class AppComponent implements OnInit {
       confetti(Object.assign({}, defaults, { particleCount, origin: { x: this.utilities.randomInRange(0.7, 0.9), y: Math.random() - 0.2 } }));
 
     }, 250);
+
+  }
+
+  public isChatEnabled(): boolean {
+
+    return [ConnectionStatus.Connected, ConnectionStatus.Joined].includes(this.connectionStatus);
+
+  }
+
+  public toggleChat(): void {
+
+    if ( ! this.isChatEnabled() )
+      return;
+
+    this.chatOpened = ! this.chatOpened;
+
+    if ( this.chatOpened ) {
+      
+      this.unreadChat = 0;
+      this.notificationShake = false;
+
+    }
+    
+    this.detector.detectChanges();
 
   }
 

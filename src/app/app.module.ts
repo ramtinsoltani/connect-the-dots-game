@@ -6,13 +6,15 @@ import { AppComponent } from './app.component';
 import { DialogComponent } from './components/dialog/dialog.component';
 import { ScoreboardComponent } from './components/scoreboard/scoreboard.component';
 import { BoardComponent } from './components/board/board.component';
+import { ChatComponent } from './components/chat/chat.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     DialogComponent,
     ScoreboardComponent,
-    BoardComponent
+    BoardComponent,
+    ChatComponent
   ],
   imports: [
     BrowserModule,
