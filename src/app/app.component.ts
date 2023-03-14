@@ -55,6 +55,13 @@ export class AppComponent implements OnInit {
 
     });
 
+    this.peer.onError.subscribe(error => {
+
+      if ( error.message.includes('Could not connect to peer') && this.gameProgress === GameProgress.NotStarted )
+        this.working = false;
+
+    });
+
     this.game.progress.subscribe(state => {
 
       this.gameProgress = state;

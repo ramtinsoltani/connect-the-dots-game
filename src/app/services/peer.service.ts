@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, EventEmitter } from '@angular/core';
 import { Peer, DataConnection } from 'peerjs';
 import { environment } from '../../environments/environment';
 import { UtilitiesService } from './utilities.service';
@@ -59,6 +59,7 @@ export class PeerService {
     return this.connectionState$.value;
 
   }
+  public onError = new EventEmitter<Error>();
 
   constructor(
     private util: UtilitiesService
@@ -131,7 +132,13 @@ export class PeerService {
 
     });
 
-    this.peer.on('error', error => console.error('Server connection error:', error));
+    this.peer.on('error', error => {
+
+      console.error('Server connection error:', error)
+
+      this.onError.emit(error);
+
+    });
 
   }
 
