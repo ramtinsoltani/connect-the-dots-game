@@ -37,11 +37,13 @@
   }
 
   &.winner-joined .name-plate.host,
-  &.winner-joined .score-plate.host,
-  &.draw .name-plate,
-  &.draw .score-plate {
+  &.winner-joined .score-plate.host {
     background-color: color(gray-light) !important;
     color: rgba(0, 0, 0, 0.35) !important;
+  }
+
+  &.draw .score-plate {
+    border-color: rgba(0, 0, 0, 0.25);
   }
 }
 
@@ -83,7 +85,7 @@
 }
 
 .score-plate {
-  width: rem(60px);
+  width: rem(80px);
   height: rem(60px);
   display: flex;
   justify-content: center;
@@ -91,15 +93,17 @@
   color: color(gray-lightest);
   font-size: rem(40px);
   position: relative;
-  transition: color .2s ease-in-out, background-color .2s ease-in-out;
+  transition: color .2s ease-in-out, background-color .2s ease-in-out, border-color .2s ease-in-out;
 }
 
 .host {
   background-color: color(accent-blue);
+  border-right: rem(1px) solid transparent;
 }
 
 .joined {
   background-color: color(accent-red);
+  border-left: rem(1px) solid transparent;
 }
 
 .left-radius {
