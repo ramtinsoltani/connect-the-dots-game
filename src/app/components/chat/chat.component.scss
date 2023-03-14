@@ -23,7 +23,7 @@
   overflow-y: auto;
   max-height: calc(100vh - rem(80px));
   min-width: 350px;
-  overflow: hidden;
+  overflow-x: hidden;
 
   .message {
     font-size: rem(14px);

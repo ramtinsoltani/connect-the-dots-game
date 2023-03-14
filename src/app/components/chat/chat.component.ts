@@ -14,6 +14,9 @@ export class ChatComponent implements OnInit {
   @ViewChild('message')
   public messageElement!: ElementRef<HTMLInputElement>;
 
+  @ViewChild('messageContainer')
+  public messageContainerElement!: ElementRef<HTMLDivElement>;
+
   @Input()
   public open: boolean = false;
 
@@ -42,6 +45,8 @@ export class ChatComponent implements OnInit {
 
       this.messages = data;
       this.detector.detectChanges();
+
+      this.messageContainerElement.nativeElement.scrollTop = this.messageContainerElement.nativeElement.scrollHeight;
 
     });
     

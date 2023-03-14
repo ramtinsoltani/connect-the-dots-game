@@ -1,5 +1,5 @@
 <div class="chat-pane" [ngClass]="{ open }">
-  <div #messageContainer class="messages" [scrollTop]="messageContainer.scrollHeight">
+  <div #messageContainer class="messages">
     <div class="message" *ngFor="let message of messages">
       <div class="message-header">
         <span
