@@ -32,10 +32,14 @@
     <div class="form-control small">
       <label for="gameSize">Game Size</label>
       <select #gameSize name="gameSize">
-        <option [value]="GameSize.Small" [selected]="defaultGameSize === GameSize.Small">Small (6x6)</option>
-        <option [value]="GameSize.Medium" [selected]="defaultGameSize === GameSize.Medium">Medium (8x8)</option>
-        <option [value]="GameSize.Large" [selected]="defaultGameSize === GameSize.Large">Large (10x10)</option>
-        <option [value]="GameSize.Huge" [selected]="defaultGameSize === GameSize.Huge">Huge (12x12)</option>
+        <ng-container *ngFor="let key of GameSizeKeys">
+          <option
+          *ngIf="getGameSizeVisibility(GameSize[key])"
+          [value]="GameSize[key]"
+          [selected]="defaultGameSize === GameSize[key]">
+            {{ key }} ({{ GameBoardSize[GameSize[key]] }}x{{ GameBoardSize[GameSize[key]] }})
+          </option>
+        </ng-container>
       </select>
     </div>
   </ng-container>

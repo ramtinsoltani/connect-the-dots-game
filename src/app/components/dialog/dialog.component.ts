@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter, ViewChild, ElementRef, ChangeDetectorRef, AfterViewInit } from '@angular/core';
-import { GameSize } from 'src/app/services/game.service';
+import { GameSize, GameBoardSize } from 'src/app/services/game.service';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-dialog',
@@ -8,7 +9,10 @@ import { GameSize } from 'src/app/services/game.service';
 })
 export class DialogComponent implements AfterViewInit {
 
+  public DialogType = DialogType;
   public GameSize = GameSize;
+  public GameSizeKeys = Object.keys(GameSize);
+  public GameBoardSize = GameBoardSize;
 
   @ViewChild('peerId')
   public peerIdElement?: ElementRef<HTMLInputElement>;
@@ -34,11 +38,10 @@ export class DialogComponent implements AfterViewInit {
   @Input()
   public disabled: boolean = false;
 
-  public DialogType = DialogType;
-
   public submitDisabled = true;
   public defaultName = localStorage.getItem('name');
   public defaultGameSize = localStorage.getItem('gameSize');
+  public production = environment.production;
 
   @Output()
   public onSubmit = new EventEmitter<DialogData>();
@@ -116,6 +119,12 @@ export class DialogComponent implements AfterViewInit {
       });
 
     }
+
+  }
+
+  public getGameSizeVisibility(size: GameSize): boolean {
+
+    return ! this.production || size !== GameSize.Test;
 
   }
 
