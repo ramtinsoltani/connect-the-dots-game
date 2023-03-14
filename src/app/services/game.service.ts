@@ -123,10 +123,10 @@ export class GameService {
 
       // Otherwise, message is patch operations
       applyPatch(this.state, data, true, true);
-      
-      this.updateGameProgress();
 
       this.onStateChanged.emit(cloneDeep(this.state));
+
+      this.updateGameProgress();
 
       // Highlight line if necessary
       this.updateHighlightLine(data);
@@ -172,6 +172,8 @@ export class GameService {
 
       // Populate board data
       this.populateBoardData();
+
+      this.onStateChanged.emit(cloneDeep(this.state));
 
     }
 
@@ -227,7 +229,7 @@ export class GameService {
   private playSoundEffectFromPatch(patch: Operation[]): void {
 
     if ( patch.filter(operation => operation.op === 'replace' && operation.path.match(/^\/board\/.Lines\/.+\/state/) && operation.value).length )
-      this.playSoundEffect(SoundEffect.Draw);
+      this.playSoundEffect(SoundEffect.LineDraw);
 
     if ( patch.filter(operation => operation.op === 'replace' && operation.path.match(/^\/board\/cells\/.+\/state/) && operation.value !== CellState.Free).length )
       this.playSoundEffect(SoundEffect.Score);
@@ -303,10 +305,10 @@ export class GameService {
     // Reset state
     this.state = cloneDeep(this.DEFAULT_STATE);
 
+    this.updateGameProgress();
+
     // Send patch for changes to other player
     this.peer.send(compare(stateBefore, this.state));
-
-    this.updateGameProgress();
 
     this.onStateChanged.emit(cloneDeep(this.state));
 
@@ -378,12 +380,12 @@ export class GameService {
     // Send patch for changes to other player
     this.peer.send(compare(stateBefore, this.state));
 
-    this.updateGameProgress();
-
     this.onStateChanged.emit(cloneDeep(this.state));
 
+    this.updateGameProgress();
+
     // Play sfx
-    this.playSoundEffect(SoundEffect.Draw);
+    this.playSoundEffect(SoundEffect.LineDraw);
 
     if ( cellsChecked.length && cellsChecked.reduce((a, b) => a || b) )
       this.playSoundEffect(SoundEffect.Score);
@@ -456,6 +458,12 @@ export enum PlayerTurn {
   Joined
 }
 
+export enum MatchResult {
+  HostWon,
+  JoinedWon,
+  Draw
+}
+
 export interface CellData {
   state: CellState
 }
@@ -467,11 +475,12 @@ export enum CellState {
 }
 
 export enum SoundEffect {
-  Draw = 'draw',
+  LineDraw = 'line-draw',
   Disabled = 'disabled',
   Score = 'score',
   Win = 'win',
-  Lose = 'lose'
+  Lose = 'lose',
+  Draw = 'draw'
 }
 
 export interface LineData {

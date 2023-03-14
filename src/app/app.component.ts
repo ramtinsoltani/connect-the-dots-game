@@ -1,5 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { GameService, GameProgress, GameSize, GameState, PlayerTurn, SoundEffect } from './services/game.service';
+import { GameService, GameProgress, GameSize, GameState, PlayerTurn, SoundEffect, MatchResult } from './services/game.service';
 import { PeerService, ConnectionStatus } from './services/peer.service';
 import { DialogType, DialogData, ConnectDialogData, NewGameDialogData, JoinGameDialogData } from './components/dialog/dialog.component';
 import { BoardLineEvent } from './components/board/board.component';
@@ -59,14 +59,22 @@ export class AppComponent implements OnInit {
       // Play confetti animation if player won (and sfx)
       if ( state === GameProgress.Finished ) {
 
-        const winner = this.getWinner();
+        const result = this.getMatchResult();
 
-        if ( (this.isPlayerHost() && winner === PlayerTurn.Host) || (! this.isPlayerHost() && winner === PlayerTurn.Joined) ) {
+        // If player won
+        if ( (this.isPlayerHost() && result === MatchResult.HostWon) || (! this.isPlayerHost() && result === MatchResult.JoinedWon) ) {
 
           this.playConfetti();
           this.game.playSoundEffect(SoundEffect.Win);
 
         }
+        // If draw
+        else if ( result === MatchResult.Draw ) {
+
+          this.game.playSoundEffect(SoundEffect.Draw);
+
+        }
+        // If player lost
         else {
 
           this.game.playSoundEffect(SoundEffect.Lose);
@@ -164,12 +172,17 @@ export class AppComponent implements OnInit {
 
   }
 
-  public getWinner(): PlayerTurn | undefined {
+  public getMatchResult(): MatchResult | undefined {
 
+    // If cannot determine winner
     if ( this.gameProgress !== GameProgress.Finished || ! this.gameState || ! this.gameState.players.host || ! this.gameState.players.joined )
       return undefined;
-    
-    return this.gameState.players.host.score > this.gameState.players.joined.score ? PlayerTurn.Host : PlayerTurn.Joined;
+
+    // If game is a draw
+    if ( this.gameState.players.host.score === this.gameState.players.joined.score )
+      return MatchResult.Draw;
+
+    return this.gameState.players.host.score > this.gameState.players.joined.score ? MatchResult.HostWon : MatchResult.JoinedWon;
 
   }
 

@@ -26,7 +26,7 @@
     [joinedScore]="gameState.players.joined?.score"
     [currentTurn]="gameState.currentTurn"
     [displayNewGame]="gameProgress === GameProgress.Finished && isPlayerHost()"
-    [winner]="gameProgress === GameProgress.Finished ? getWinner() : undefined"
+    [matchResult]="gameProgress === GameProgress.Finished ? getMatchResult() : undefined"
     (onNewGame)="onNewGameClicked()">
     </app-scoreboard>
     <app-board

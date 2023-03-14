@@ -23,7 +23,9 @@
   }
 
   &.winner-host .name-plate.joined,
-  &.winner-host .score-plate.joined {
+  &.winner-host .score-plate.joined,
+  &.draw .name-plate,
+  &.draw .score-plate {
     background-color: color(gray-light) !important;
     color: rgba(0, 0, 0, 0.35) !important;
   }
@@ -35,7 +37,9 @@
   }
 
   &.winner-joined .name-plate.host,
-  &.winner-joined .score-plate.host {
+  &.winner-joined .score-plate.host,
+  &.draw .name-plate,
+  &.draw .score-plate {
     background-color: color(gray-light) !important;
     color: rgba(0, 0, 0, 0.35) !important;
   }
