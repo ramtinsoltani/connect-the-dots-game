@@ -38,6 +38,9 @@ export class DialogComponent implements AfterViewInit {
   @Input()
   public disabled: boolean = false;
 
+  @Input()
+  public errorMessage?: string;
+
   public submitDisabled = true;
   public defaultName = localStorage.getItem('name');
   public defaultGameSize = localStorage.getItem('gameSize');

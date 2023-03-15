@@ -19,6 +19,7 @@
   title="Connect To Player"
   submitLabel="Connect"
   [type]="DialogType.Connect"
+  [errorMessage]="errorMessage"
   [id]="id"
   (onSubmit)="onDialogSubmit($event)"></app-dialog>
   <app-dialog
@@ -72,5 +73,5 @@
 </main>
 <app-chat
 [open]="chatOpened"
-[names]="{ host: gameState?.players?.host?.name, joined: gameState?.players?.joined?.name }">
+[names]="playerNames">
 </app-chat>

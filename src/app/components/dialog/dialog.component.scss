@@ -58,3 +58,10 @@ section {
     flex-basis: 0;
   }
 }
+
+.error-message {
+  color: color(accent-red);
+  font-size: rem(12px);
+  font-weight: 500;
+  margin-top: rem(5px);
+}

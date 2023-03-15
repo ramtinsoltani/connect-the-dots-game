@@ -7,6 +7,7 @@ import confetti from 'canvas-confetti';
 import { UtilitiesService } from './services/utilities.service';
 import { ChatService } from './services/chat.service';
 import { environment } from '../environments/environment';
+import { PlayerNames } from './components/chat/chat.component';
 
 @Component({
   selector: 'app-root',
@@ -32,9 +33,11 @@ export class AppComponent implements OnInit {
   public gameState?: GameState;
   public highlightHLine?: [number, number];
   public highlightVLine?: [number, number];
+  public playerNames: PlayerNames = { host: undefined, joined: undefined };
   public chatOpened: boolean = false;
   public unreadChat: number = 0;
   public notificationShake: boolean = false;
+  public errorMessage?: string;
 
   constructor(
     private detector: ChangeDetectorRef,
@@ -57,8 +60,14 @@ export class AppComponent implements OnInit {
 
     this.peer.onError.subscribe(error => {
 
-      if ( error.message.includes('Could not connect to peer') && this.gameProgress === GameProgress.NotStarted )
+      if ( error.message.includes('Could not connect to peer') && this.gameProgress === GameProgress.NotStarted ) {
+
         this.working = false;
+        this.errorMessage = 'Could not connect to peer!';
+
+        this.detector.detectChanges();
+
+      }
 
     });
 
@@ -107,6 +116,8 @@ export class AppComponent implements OnInit {
     this.game.onStateChanged.subscribe(state => {
 
       this.gameState = state;
+      this.playerNames.host = state.players.host?.name || this.playerNames.host;
+      this.playerNames.joined = state.players.joined?.name || this.playerNames.joined;
 
       this.detector.detectChanges();
 
@@ -177,6 +188,8 @@ export class AppComponent implements OnInit {
   }
 
   public onDialogSubmit(event: DialogData) {
+
+    this.errorMessage = undefined;
 
     if ( event.type === DialogType.Connect ) {
 

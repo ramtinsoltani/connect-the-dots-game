@@ -13,6 +13,7 @@
     maxlength="6"
     (keyup)="checkSubmitState(peerId.value, $event)"
     [disabled]="disabled">
+    <div *ngIf="errorMessage" class="error-message">{{ errorMessage }}</div>
   </div>
 </section>
 <section *ngIf="type !== DialogType.Connect">
